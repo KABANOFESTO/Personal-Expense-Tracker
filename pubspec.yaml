@@ -1,0 +1,46 @@
+name: finpayconnect_seller
+description: "A new Flutter project."
+
+# Prevent publishing to pub.dev
+publish_to: 'none'
+
+# Version of your app
+version: 1.0.0+1
+
+# Dart and Flutter SDK constraints
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+  provider: ^6.0.0
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^5.0.2
+  cupertino_icons: ^1.0.8
+  sqflite: ^2.3.0
+  sqflite_ffi: ^2.2.8
+  path: ^1.8.3
+  email_validator: ^2.0.1
+  fluttertoast: ^8.2.8
+  intl: ^0.19.0
+  sqflite_common_ffi: ^2.3.0  # For desktop SQLite support
+  mailer: ^6.0.1
+  encrypt: ^5.0.0
+  path_provider: ^2.1.5
+  fl_chart: ^0.69.0 
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1  # For linting and code quality checks
+
+# Flutter configuration
+flutter:
+  uses-material-design: true
+
+  # Assets
+  assets:
+    - lib/assets/bg.jpg
