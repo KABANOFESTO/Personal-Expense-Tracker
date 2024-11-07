@@ -1,0 +1,8 @@
+{
+  "@@locale": "en",
+  "appTitle": "Expense Dashboard",
+  "overview": "Overview",
+  "monthlyExpenses": "Monthly Expenses",
+  "addExpense": "Add Expense",
+  "viewExpenses": "View Expenses"
+}

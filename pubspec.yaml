@@ -15,27 +15,39 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  contacts_service: ^0.6.0
+  permission_handler: ^10.2.0 
+  connectivity_plus: ^5.0.0
+  battery_plus: ^5.0.0
+  flutter_blue_plus: ^1.31.8
   http: ^1.2.2
-  provider: ^6.0.0
+  provider: ^6.0.5
   shared_preferences: ^2.2.2
   flutter_secure_storage: ^5.0.2
   cupertino_icons: ^1.0.8
-  sqflite: ^2.3.0
-  sqflite_ffi: ^2.2.8
-  path: ^1.8.3
+  google_sign_in: ^5.4.0
+  firebase_auth: ^5.0.0
+  firebase_auth_web: ^5.0.0
+  hive: ^2.2.1
+  hive_flutter: ^1.1.0
   email_validator: ^2.0.1
   fluttertoast: ^8.2.8
   intl: ^0.19.0
-  sqflite_common_ffi: ^2.3.0  # For desktop SQLite support
   mailer: ^6.0.1
   encrypt: ^5.0.0
   path_provider: ^2.1.5
-  fl_chart: ^0.69.0 
+  fl_chart: ^0.69.0
+  url_launcher: ^6.0.20
+  image_picker: ^0.8.4+1
+  flutter_localizations:  # Localization support
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1  # For linting and code quality checks
+  build_runner: ^2.4.0  # Code generator
+  hive_generator: ^2.0.0  # Code generator for Hive
 
 # Flutter configuration
 flutter:

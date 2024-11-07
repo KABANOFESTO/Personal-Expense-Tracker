@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../database/expense_db.dart';
 import '../models/expense_model.dart';
 import 'add_expense_screen.dart';
+import 'dart:io';
 
 class ExpenseListScreen extends StatefulWidget {
   @override
@@ -19,10 +20,21 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   @override
   void initState() {
     super.initState();
-    _futureExpenses = ExpenseDB().getExpenses();
+    _loadExpenses();
   }
 
-  Future<List<Expense>> _filterExpenses(List<Expense> expenses) async {
+  void _loadExpenses() {
+    setState(() {
+      _futureExpenses = ExpenseDB().getExpenses();
+    });
+    _futureExpenses.then((expenses) {
+      print("Loaded expenses: $expenses"); // Debugging line to confirm loading
+    }).catchError((error) {
+      print("Error loading expenses: $error"); // Debugging line for errors
+    });
+  }
+
+  List<Expense> _filterExpenses(List<Expense> expenses) {
     var filtered = expenses;
 
     if (_selectedCategory != 'all') {
@@ -36,44 +48,37 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       }).toList();
     }
 
-    if (_sortBy == 'date') {
-      filtered.sort((a, b) {
+    filtered.sort((a, b) {
+      if (_sortBy == 'date') {
         return _sortOrder == 'desc' ? b.date.compareTo(a.date) : a.date.compareTo(b.date);
-      });
-    } else if (_sortBy == 'amount') {
-      filtered.sort((a, b) {
+      } else if (_sortBy == 'amount') {
         return _sortOrder == 'desc' ? b.amount.compareTo(a.amount) : a.amount.compareTo(b.amount);
-      });
-    }
+      }
+      return 0;
+    });
 
+    print("Filtered expenses: $filtered"); // Debugging line for filtered data
     return filtered;
   }
 
   Future<void> _deleteExpense(int id) async {
     await ExpenseDB().deleteExpense(id);
-    setState(() {
-      _futureExpenses = ExpenseDB().getExpenses();
-    });
+    _loadExpenses();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
-        title: Text('Expense List', style: TextStyle(color: Colors.white)),
+        title: Text('Expense List'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add, color: Colors.white),
+            icon: Icon(Icons.add),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => AddExpenseScreen()),
-              ).then((_) {
-                setState(() {
-                  _futureExpenses = ExpenseDB().getExpenses(); // Refresh expenses after adding
-                });
-              });
+              ).then((_) => _loadExpenses());
             },
           ),
         ],
@@ -84,16 +89,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
           final expenses = snapshot.data ?? [];
+          final filteredExpenses = _filterExpenses(expenses);
 
           return Column(
             children: [
-              // Filters
               Container(
                 padding: const EdgeInsets.all(16.0),
                 color: Colors.teal.shade50,
@@ -123,38 +127,34 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   ],
                 ),
               ),
-              // Expenses List
               Expanded(
-                child: FutureBuilder<List<Expense>>(
-                  future: _filterExpenses(expenses),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-
-                    final filteredExpenses = snapshot.data ?? [];
-
-                    return ListView.builder(
-                      itemCount: filteredExpenses.length,
-                      itemBuilder: (context, index) {
-                        final expense = filteredExpenses[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          elevation: 4,
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(16.0),
-                            title: Text('${expense.description} - \$${expense.amount}', style: TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text('${expense.category} on ${expense.date}', style: TextStyle(color: Colors.grey[600])),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _deleteExpense(expense.id!),
+                child: filteredExpenses.isEmpty
+                    ? Center(child: Text('No expenses found'))
+                    : ListView.builder(
+                        itemCount: filteredExpenses.length,
+                        itemBuilder: (context, index) {
+                          final expense = filteredExpenses[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            child: ListTile(
+                              leading: expense.imagePath != null && expense.imagePath!.isNotEmpty
+                                  ? Image.file(
+                                      File(expense.imagePath!),
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(Icons.receipt, size: 50), // Placeholder icon if no image
+                              title: Text('${expense.description} - \$${expense.amount}'),
+                              subtitle: Text('${expense.category} on ${expense.date}'),
+                              trailing: IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () => _deleteExpense(expense.id!),
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                          );
+                        },
+                      ),
               ),
             ],
           );
@@ -166,15 +166,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   DropdownButton<String> _buildDropdownButton(String value, List<String> items, ValueChanged<String?> onChanged) {
     return DropdownButton<String>(
       value: value,
-      dropdownColor: Colors.teal.shade100,
-      items: items.map((String category) {
-        return DropdownMenuItem<String>(
-          value: category,
-          child: Text(category, style: TextStyle(color: Colors.black)),
+      items: items.map((item) {
+        return DropdownMenuItem(
+          value: item,
+          child: Text(item),
         );
       }).toList(),
       onChanged: onChanged,
-      icon: Icon(Icons.arrow_drop_down, color: Colors.black),
     );
   }
 }

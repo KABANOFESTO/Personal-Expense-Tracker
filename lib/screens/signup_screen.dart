@@ -23,7 +23,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
 
     try {
-      // Insert user into SQLite database
+      // Create user with hashed password
       int result = await DatabaseHelper.instance.createUser(name, email, password);
 
       if (result != -1) {
@@ -31,7 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
         Navigator.pushReplacementNamed(context, '/login');
       } else {
         Fluttertoast.showToast(
-          msg: "Username already exists, please choose a different one",
+          msg: "Email already exists, please choose a different one",
         );
       }
     } catch (error) {

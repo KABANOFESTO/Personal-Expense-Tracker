@@ -4,7 +4,7 @@ import 'package:mailer/smtp_server.dart';
 class EmailService {
   static Future<void> sendResetPasswordEmail(
       String recipientEmail, String resetLink) async {
-    final smtpServer = gmail('kabanofesto1.com', 'KSMKEPIM1');
+    final smtpServer = gmail('kabanofesto1.com', '');
 
     final message = Message()
       ..from = Address('kabanofesto1@gmail.com', 'relax-pay')

@@ -1,10 +1,26 @@
-// expense_model.dart
-class Expense {
+import 'package:hive/hive.dart';
+
+part 'expense_model.g.dart';
+
+@HiveType(typeId: 0)
+class Expense extends HiveObject {
+  @HiveField(0)
   int? id;
+
+  @HiveField(1)
   String category;
+
+  @HiveField(2)
   String description;
+
+  @HiveField(3)
   double amount;
-  DateTime date; // Keep as DateTime for internal use
+
+  @HiveField(4)
+  DateTime date;
+
+  @HiveField(5)
+  String? imagePath; // New field to store image path
 
   Expense({
     this.id,
@@ -12,27 +28,6 @@ class Expense {
     required this.description,
     required this.amount,
     required this.date,
+    this.imagePath,
   });
-
-  // Method to convert the Expense object to a Map
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'category': category,
-      'description': description,
-      'amount': amount,
-      'date': date.toIso8601String(), // Convert DateTime to String
-    };
-  }
-
-  // Method to create an Expense object from a Map
-  static Expense fromMap(Map<String, dynamic> map) {
-    return Expense(
-      id: map['id'],
-      category: map['category'],
-      description: map['description'],
-      amount: map['amount'],
-      date: DateTime.parse(map['date']), // Convert String to DateTime
-    );
-  }
 }

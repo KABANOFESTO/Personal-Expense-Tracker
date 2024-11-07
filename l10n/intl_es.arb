@@ -1,0 +1,8 @@
+{
+  "@@locale": "es",
+  "appTitle": "Tablero de Gastos",
+  "overview": "Resumen",
+  "monthlyExpenses": "Gastos Mensuales",
+  "addExpense": "Agregar Gasto",
+  "viewExpenses": "Ver Gastos"
+}
